@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carrousel Coverflow 3D</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #07080c;
+      color: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 20% 12%, rgba(93, 124, 255, 0.16), transparent 28%),
+        radial-gradient(circle at 82% 22%, rgba(226, 179, 106, 0.12), transparent 26%),
+        linear-gradient(135deg, #05060a 0%, #11131a 46%, #05060a 100%);
+      color: #fff;
+    }
+
+    .page-shell {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: clamp(28px, 4vw, 56px) 0;
+    }
+
+    .demo-header {
+      display: grid;
+      gap: 10px;
+      max-width: 740px;
+      margin-bottom: clamp(24px, 4vw, 46px);
+    }
+
+    .demo-header__eyebrow {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .demo-header__title {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 5.3rem);
+      font-weight: 760;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .demo-header__text {
+      max-width: 610px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: clamp(1rem, 1.7vw, 1.16rem);
+      line-height: 1.7;
+    }
+
+    .photo-coverflow {
+      --cf-bg: rgba(7, 8, 12, 0.48);
+      --cf-radius: 20px;
+      --cf-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+      --cf-transition: 850ms cubic-bezier(0.22, 1, 0.36, 1);
+
+      position: relative;
+      overflow: hidden;
+      min-height: clamp(450px, 62vw, 700px);
+      padding: clamp(30px, 5vw, 58px) 0 22px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 34%),
+        var(--cf-bg);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .photo-coverflow__viewport {
+      position: relative;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .photo-coverflow__stage {
+      position: relative;
+      height: clamp(350px, 48vw, 610px);
+      perspective: 1200px;
+      transform-style: preserve-3d;
+    }
+
+    .photo-coverflow__slide {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: clamp(190px, 23vw, 320px);
+      aspect-ratio: 3 / 4.35;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--cf-radius);
+      overflow: hidden;
+      background: #151821;
+      box-shadow: var(--cf-shadow);
+      transform-style: preserve-3d;
+      transition:
+        transform var(--cf-transition),
+        opacity var(--cf-transition),
+        filter var(--cf-transition);
+      will-change: transform, opacity, filter;
+      pointer-events: none;
+    }
+
+    .photo-coverflow__slide img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .photo-coverflow__slide::before,
+    .photo-coverflow__slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .photo-coverflow__slide::before {
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.34), transparent 22%, transparent 76%, rgba(0, 0, 0, 0.28)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 28%, rgba(0, 0, 0, 0.2));
+      mix-blend-mode: soft-light;
+    }
+
+    .photo-coverflow__slide::after {
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .photo-coverflow__nav {
+      position: absolute;
+      top: 50%;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(10, 12, 18, 0.5);
+      color: #fff;
+      font-size: 34px;
+      line-height: 1;
+      cursor: pointer;
+      transform: translateY(-50%);
+      backdrop-filter: blur(16px);
+      transition: background 220ms ease, transform 220ms ease, opacity 220ms ease;
+    }
+
+    .photo-coverflow__nav:hover,
+    .photo-coverflow__nav:focus-visible {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateY(-50%) scale(1.06);
+      outline: none;
+    }
+
+    .photo-coverflow__nav--prev {
+      left: clamp(10px, 2.2vw, 34px);
+    }
+
+    .photo-coverflow__nav--next {
+      right: clamp(10px, 2.2vw, 34px);
+    }
+
+    .photo-coverflow__dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      min-height: 28px;
+      margin-top: 18px;
+    }
+
+    .photo-coverflow__dot {
+      width: 7px;
+      height: 7px;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.28);
+      cursor: pointer;
+      transition: width 260ms ease, background 260ms ease, transform 260ms ease;
+    }
+
+    .photo-coverflow__dot:hover,
+    .photo-coverflow__dot:focus-visible {
+      background: rgba(255, 255, 255, 0.62);
+      outline: none;
+      transform: scale(1.18);
+    }
+
+    .photo-coverflow__dot.is-active {
+      width: 26px;
+      background: rgba(255, 255, 255, 0.92);
+      transform: none;
+    }
+
+    @media (max-width: 900px) {
+      .page-shell {
+        width: min(100% - 24px, 820px);
+      }
+
+      .photo-coverflow {
+        border-radius: 24px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .demo-header {
+        margin-bottom: 22px;
+      }
+
+      .photo-coverflow {
+        min-height: 485px;
+        padding: 34px 0 18px;
+      }
+
+      .photo-coverflow__stage {
+        height: 390px;
+        perspective: 850px;
+      }
+
+      .photo-coverflow__slide {
+        width: min(68vw, 260px);
+        border-radius: 16px;
+      }
+
+      .photo-coverflow__nav {
+        width: 39px;
+        height: 39px;
+        font-size: 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-shell {
+        width: min(100% - 18px, 420px);
+        padding-top: 22px;
+      }
+
+      .demo-header__text {
+        line-height: 1.55;
+      }
+
+      .photo-coverflow {
+        min-height: 440px;
+        border-radius: 20px;
+      }
+
+      .photo-coverflow__stage {
+        height: 345px;
+      }
+
+      .photo-coverflow__slide {
+        width: min(72vw, 230px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .photo-coverflow__slide,
+      .photo-coverflow__nav,
+      .photo-coverflow__dot {
+        transition-duration: 1ms;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="demo-header">
+      <p class="demo-header__eyebrow">Coverflow 3D</p>
+      <h1 class="demo-header__title">Galerie photo premium</h1>
+      <p class="demo-header__text">
+        Un carrousel portrait responsive, fluide et autonome, avec profondeur CSS,
+        défilement automatique, pause au survol, flèches discrètes et points de navigation.
+      </p>
+    </header>
+
+    <section class="photo-coverflow" aria-label="Galerie photo premium">
+      <div class="photo-coverflow__viewport">
+        <button class="photo-coverflow__nav photo-coverflow__nav--prev" type="button" aria-label="Image précédente">
+          ‹
+        </button>
+
+        <div class="photo-coverflow__stage" data-coverflow></div>
+
+        <button class="photo-coverflow__nav photo-coverflow__nav--next" type="button" aria-label="Image suivante">
+          ›
+        </button>
+      </div>
+
+      <div class="photo-coverflow__dots" data-coverflow-dots aria-label="Navigation du carrousel"></div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const images = [
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=85"
+      ];
+
+      const config = {
+        autoplay: true,          // Active ou désactive le défilement automatique.
+        autoplayDelay: 2600,     // Vitesse entre deux images, en millisecondes.
+        transitionMs: 850,       // Durée de la transition douce CSS.
+        desktopSpacing: 245,     // Distance horizontale entre les images sur desktop.
+        mobileSpacing: 140,      // Distance horizontale entre les images sur mobile.
+        rotateIntensity: 34,     // Intensité de la perspective rotateY.
+        visibleSideCount: 2      // Nombre d'images visibles de chaque côté sur desktop.
+      };
+
+      const root = document.querySelector(".photo-coverflow");
+      const stage = root.querySelector("[data-coverflow]");
+      const dotsWrap = root.querySelector("[data-coverflow-dots]");
+      const prevBtn = root.querySelector(".photo-coverflow__nav--prev");
+      const nextBtn = root.querySelector(".photo-coverflow__nav--next");
+
+      let activeIndex = 0;
+      let timer = null;
+
+      root.style.setProperty("--cf-transition", `${config.transitionMs}ms cubic-bezier(0.22, 1, 0.36, 1)`);
+
+      images.forEach((src, index) => {
+        const slide = document.createElement("article");
+        slide.className = "photo-coverflow__slide";
+
+        const image = document.createElement("img");
+        image.src = src;
+        image.alt = `Photo galerie ${index + 1}`;
+        image.loading = index === 0 ? "eager" : "lazy";
+
+        slide.appendChild(image);
+        stage.appendChild(slide);
+
+        const dot = document.createElement("button");
+        dot.className = "photo-coverflow__dot";
+        dot.type = "button";
+        dot.setAttribute("aria-label", `Afficher l'image ${index + 1}`);
+        dot.addEventListener("click", () => goTo(index));
+        dotsWrap.appendChild(dot);
+      });
+
+      const slides = [...stage.querySelectorAll(".photo-coverflow__slide")];
+      const dots = [...dotsWrap.querySelectorAll(".photo-coverflow__dot")];
+
+      function getShortestOffset(index) {
+        const total = slides.length;
+        let offset = index - activeIndex;
+
+        if (offset > total / 2) offset -= total;
+        if (offset < -total / 2) offset += total;
+
+        return offset;
+      }
+
+      function render() {
+        const isMobile = window.matchMedia("(max-width: 760px)").matches;
+        const spacing = isMobile ? config.mobileSpacing : config.desktopSpacing;
+        const visibleSideCount = isMobile ? 1 : config.visibleSideCount;
+
+        slides.forEach((slide, index) => {
+          const offset = getShortestOffset(index);
+          const abs = Math.abs(offset);
+          const isVisible = abs <= visibleSideCount;
+
+          const x = offset * spacing;
+          const rotateY = offset === 0 ? 0 : -offset * config.rotateIntensity;
+          const scale = Math.max(0.7, 1 - abs * 0.13);
+          const z = 130 - abs * 90;
+          const opacity = isVisible ? Math.max(0.16, 1 - abs * 0.28) : 0;
+          const brightness = Math.max(0.46, 1 - abs * 0.17);
+          const saturation = Math.max(0.78, 1 - abs * 0.045);
+
+          slide.style.zIndex = String(100 - abs);
+          slide.style.opacity = opacity;
+          slide.style.filter = `brightness(${brightness}) saturate(${saturation})`;
+          slide.style.transform = `
+            translate3d(calc(-50% + ${x}px), -50%, ${z}px)
+            rotateY(${rotateY}deg)
+            scale(${scale})
+          `;
+          slide.setAttribute("aria-hidden", abs === 0 ? "false" : "true");
+        });
+
+        dots.forEach((dot, index) => {
+          dot.classList.toggle("is-active", index === activeIndex);
+          dot.setAttribute("aria-current", index === activeIndex ? "true" : "false");
+        });
+      }
+
+      function goTo(index) {
+        activeIndex = (index + slides.length) % slides.length;
+        render();
+        restartAutoplay();
+      }
+
+      function next() {
+        goTo(activeIndex + 1);
+      }
+
+      function prev() {
+        goTo(activeIndex - 1);
+      }
+
+      function startAutoplay() {
+        if (!config.autoplay) return;
+        stopAutoplay();
+        timer = window.setInterval(next, config.autoplayDelay);
+      }
+
+      function stopAutoplay() {
+        if (timer) window.clearInterval(timer);
+        timer = null;
+      }
+
+      function restartAutoplay() {
+        stopAutoplay();
+        startAutoplay();
+      }
+
+      nextBtn.addEventListener("click", next);
+      prevBtn.addEventListener("click", prev);
+
+      root.addEventListener("mouseenter", stopAutoplay);
+      root.addEventListener("mouseleave", startAutoplay);
+      root.addEventListener("focusin", stopAutoplay);
+      root.addEventListener("focusout", startAutoplay);
+      window.addEventListener("resize", render);
+
+      render();
+      startAutoplay();
+    })();
+  </script>
+</body>
+</html>

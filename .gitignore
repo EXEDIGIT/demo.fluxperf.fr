@@ -1,0 +1,7 @@
+_DEPLOIEMENTS/
+sites/clients/netindus/.verify-netindus/
+sites/clients/mitrocom/
+
+# Operating system metadata
+Thumbs.db
+.DS_Store

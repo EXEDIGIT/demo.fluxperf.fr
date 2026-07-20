@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 520" role="img" aria-labelledby="title desc">
+  <title id="title">QUALIPROPRE - Propreté &amp; Services Associés</title>
+  <desc id="desc">Logo Qualipropre avec symbole bleu et baseline Propreté et Services Associés.</desc>
+  <defs>
+    <style>
+      .outline{stroke:#050505;stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+      .blue{fill:#1597d3}
+      .blue-mid{fill:#12a8d5}
+      .blue-light{fill:#b9ddf1}
+      .blue-soft{fill:#80c4e8}
+      .word{fill:#0788c8;font-family:Georgia,'Times New Roman',serif;font-size:70px;font-weight:400;letter-spacing:-3px}
+      .tagline{fill:#0788c8;font-family:Arial,Helvetica,sans-serif;font-size:35px;font-weight:700}
+    </style>
+  </defs>
+
+  <g transform="translate(0 1)">
+    <path class="blue outline" d="M101 86 249 0l44 26-192 111Z"/>
+    <path class="blue-mid outline" d="M101 139 294 28l42 24-181 105c-18-6-36-8-54-6Z"/>
+    <path class="blue-soft outline" d="M156 158 337 53l42 24-141 82c-22-4-47-8-82-1Z"/>
+    <path class="blue-light outline" d="M238 160 380 78l19 11c-13 41-45 57-91 60-34 2-57 6-70 25Z"/>
+
+    <path class="blue outline" d="M34 188c68-54 141-68 204-14 24-32 71-25 111-30 31-4 44-15 51-39h77c-20 46-63 64-130 66-43 1-64 13-78 59h-55c-14-45-38-65-74-67-37-2-69 13-102 45H34Z"/>
+
+    <path class="blue-light outline" d="M100 227v36l292-169v-1c-12 33-37 49-76 54L100 272v44l297-172v42L136 337l33 19 228-132v42L206 377l42 24 151-88V166c-56 7-96 19-113 64h-69c-16-46-44-67-83-67-14 0-25 3-34 9v28Z"/>
+    <path class="blue outline" d="M34 188c68-54 141-68 204-14 24-32 71-25 111-30 31-4 44-15 51-39h77c-20 46-63 64-130 66-43 1-64 13-78 59h-55c-14-45-38-65-74-67-37-2-69 13-102 45H34Z"/>
+    <path class="outline" fill="none" d="M100 227 196 171M100 272 316 147M136 337 397 186M169 356 397 224M206 377 397 266"/>
+  </g>
+
+  <text class="word" x="250" y="428" text-anchor="middle">QUALIPROPRE</text>
+  <text class="tagline" x="250" y="507" text-anchor="middle">Propreté &amp; Services Associés</text>
+</svg>
