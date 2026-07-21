@@ -1951,6 +1951,9 @@ a.contact-detail:hover {
     grid-template-columns: 1fr auto;
     min-height: 70px;
     padding: 9px 10px 9px 19px;
+    /* Keep the fixed drawer anchored to the viewport on mobile. */
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     border-radius: 18px;
   }
 
