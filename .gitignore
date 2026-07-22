@@ -5,3 +5,7 @@ sites/clients/mitrocom/
 # Operating system metadata
 Thumbs.db
 .DS_Store
+
+# Osteomed: deploy built output only
+sites/clients/osteomed/
+.pnpm-store/

@@ -31,7 +31,7 @@ function slugifyClientName(name) {
 
 const clientName = getClientName();
 const clientSlug = slugifyClientName(clientName) || slugifyClientName(defaultClientName);
-const clientSitePath = `clients/${clientSlug}/index.html`;
+const clientSitePath = clientSlug === "osteomed" ? "clients/osteomed/dist/index.html" : `clients/${clientSlug}/index.html`;
 
 function hydrateClientContext() {
   document.title = `Fluxperf® · Visionneuse site · ${clientName}`;
